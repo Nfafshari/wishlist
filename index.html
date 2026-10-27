@@ -410,10 +410,8 @@ function photo(item, big = false) {
 function details(item) {
   const tags = item.tags.length ? `<div class="chips">${item.tags.map(t => `<span class="chip">${esc(t)}</span>`).join("")}</div>` : "";
   const note = item.note ? `<p class="note">${esc(item.note)}</p>` : "";
-  const links = item.links.length
-    ? item.links.map((l, i) => `<a class="btn${i ? " ghost" : ""}" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} <span aria-hidden="true">↗</span></a>`).join("")
-    : `<span class="btn off">Link coming soon</span>`;
-  return { tags, note, links: `<div class="actions">${links}</div>` };
+  const links = item.links.map((l, i) => `<a class="btn${i ? " ghost" : ""}" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} <span aria-hidden="true">↗</span></a>`).join("");
+  return { tags, note, links: links ? `<div class="actions">${links}</div>` : "" };
 }
 
 function card(item) {
