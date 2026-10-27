@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nathen's Wishlist</title>
+<meta name="description" content="Nathen's wishlist with a photo, sizes and colors, and a store link for every item.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky filter bar over category sections; product cards in an auto-fill grid, "pick one" pairs span two columns */
+:root {
+  --bg: #eef1f3;
+  --surface: #ffffff;
+  --photo: #f6f7f8;
+  --ink: #15191e;
+  --muted: #5d6670;
+  --line: #d9dee3;
+  --accent: #1d6a4e;        /* pine */
+  --accent-ink: #ffffff;
+  --accent-soft: #dcece4;
+  --berry: #b3263a;          /* preferred / pick-one */
+  --berry-soft: #f6dfe2;
+  --tag: #fbf3dc;
+  --tag-ink: #5a4610;
+  --shadow: 0 1px 2px rgb(20 30 40 / .06), 0 6px 20px rgb(20 30 40 / .06);
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "Figtree", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11161a; --surface: #1a2026; --photo: #e9edf0; --ink: #e9eef2; --muted: #9aa5af; --line: #2c343c;
+    --accent: #4fbf8f; --accent-ink: #0b1a13; --accent-soft: #19362a;
+    --berry: #f07a8a; --berry-soft: #3a1d23; --tag: #3a3220; --tag-ink: #f2dc9c;
+    --shadow: 0 1px 2px rgb(0 0 0 / .3), 0 8px 24px rgb(0 0 0 / .25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11161a; --surface: #1a2026; --photo: #e9edf0; --ink: #e9eef2; --muted: #9aa5af; --line: #2c343c;
+  --accent: #4fbf8f; --accent-ink: #0b1a13; --accent-soft: #19362a;
+  --berry: #f07a8a; --berry-soft: #3a1d23; --tag: #3a3220; --tag-ink: #f2dc9c;
+  --shadow: 0 1px 2px rgb(0 0 0 / .3), 0 8px 24px rgb(0 0 0 / .25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 400 15px/1.5 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1180px; margin: 0 auto; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+/* Header */
+header.top { padding-block: 40px 20px; display: grid; gap: 10px; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font: 800 clamp(34px, 6vw, 56px)/1 var(--display); letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); max-width: 60ch; margin: 0; }
+.lede b { color: var(--ink); font-weight: 600; }
+
+/* Filter bar */
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  padding-block: 12px; border-bottom: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+}
+.tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; min-width: 0; flex: 1 1 auto; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  font: 600 14px/1 var(--body); padding: 9px 14px; border-radius: 999px; cursor: pointer;
+  display: inline-flex; gap: 6px; align-items: center;
+}
+.tab .n { font: 500 11px/1 var(--mono); color: var(--muted); }
+.tab[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.tab[aria-pressed="true"] .n { color: inherit; opacity: .7; }
+.search { flex: 0 1 240px; min-width: 0; position: relative; }
+.search input {
+  width: 100%; font: 500 14px/1 var(--body); color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 999px; padding: 10px 14px 10px 34px;
+}
+.search svg { position: absolute; left: 12px; top: 50%; translate: 0 -50%; color: var(--muted); }
+@media (max-width: 560px) { .search { flex: 1 1 100%; } }
+
+/* Sections */
+main { padding-block: 8px 64px; display: grid; gap: 40px; }
+section.cat { display: grid; gap: 16px; padding-top: 18px; }
+.cat-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.cat-head h2 { font: 800 26px/1.1 var(--display); margin: 0; letter-spacing: -.01em; }
+.cat-head .count { font: 500 12px/1 var(--mono); color: var(--muted); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(228px, 1fr)); gap: 16px; }
+
+/* Card */
+.card {
+  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow);
+  display: flex; flex-direction: column; overflow: hidden; min-width: 0;
+}
+.shot {
+  all: unset; cursor: zoom-in; display: block; aspect-ratio: 1 / 1; max-width: 100%;
+  background: var(--photo); position: relative;
+}
+.shot:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.shot img { width: 100%; height: 100%; object-fit: contain; padding: 10px; display: block; transition: transform .25s ease; }
+.shot:hover img { transform: scale(1.04); }
+.badge {
+  position: absolute; top: 10px; left: 10px; font: 500 11px/1 var(--mono); letter-spacing: .04em;
+  text-transform: uppercase; padding: 6px 8px; border-radius: 6px; background: var(--berry); color: #fff;
+}
+.body { padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 0; }
+.store { font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.name { font: 600 16px/1.3 var(--body); margin: 0; text-wrap: balance; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font: 500 12px/1 var(--mono); background: var(--tag); color: var(--tag-ink);
+  padding: 6px 8px; border-radius: 5px; position: relative; padding-left: 16px;
+}
+.chip::before { /* hang-tag eyelet */
+  content: ""; position: absolute; left: 6px; top: 50%; width: 4px; height: 4px; border-radius: 50%;
+  translate: 0 -50%; background: var(--surface);
+}
+.note { font-size: 13.5px; color: var(--muted); margin: 0; }
+.actions { margin-top: auto; display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+  font: 600 14px/1 var(--body); padding: 10px 14px; border-radius: 10px;
+  background: var(--accent); color: var(--accent-ink);
+}
+.btn:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn.ghost:hover { border-color: var(--ink); }
+.btn.off { background: transparent; color: var(--muted); border: 1px dashed var(--line); cursor: default; }
+
+/* Pick-one group */
+.group {
+  grid-column: span 2; background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow);
+  display: flex; flex-direction: column; overflow: hidden; min-width: 0;
+}
+.group-head {
+  display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--berry-soft);
+  font: 600 14px/1.3 var(--body); color: var(--ink);
+}
+.group-head .pick { font: 500 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--berry); }
+.group-opts { display: grid; grid-template-columns: 1fr auto 1fr; flex: 1; }
+.group-opts .card { box-shadow: none; border-radius: 0; }
+.or {
+  display: grid; place-items: center; font: 800 13px/1 var(--display); color: var(--berry);
+  background: linear-gradient(var(--line), var(--line)) center / 1px 100% no-repeat; width: 34px;
+}
+.or span { background: var(--surface); padding: 6px 0; }
+@media (max-width: 620px) {
+  .group { grid-column: 1 / -1; }
+  .group-opts { grid-template-columns: 1fr; }
+  .or { width: auto; height: 30px; background-size: 100% 1px; }
+  .or span { padding: 0 10px; }
+}
+
+/* Placeholders */
+.ph { width: 100%; height: 100%; display: grid; place-items: center; align-content: center; gap: 10px; color: #6b7480; padding: 20px; text-align: center; }
+.ph svg { width: 64px; height: 64px; }
+.ph small { font: 500 11px/1.3 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.giftcard {
+  width: 78%; aspect-ratio: 1.586; border-radius: 12px; padding: 14px; color: #fff;
+  background: linear-gradient(135deg, #1d3c8f, #2a64c9 55%, #d7a531); display: flex; flex-direction: column; justify-content: space-between;
+  box-shadow: 0 10px 24px rgb(20 40 90 / .3); text-align: left;
+}
+.giftcard b { font: 800 22px/1 var(--display); font-style: italic; letter-spacing: .02em; align-self: flex-end; }
+.giftcard span { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; opacity: .9; }
+
+.empty { color: var(--muted); padding: 40px 0; text-align: center; }
+footer { color: var(--muted); font-size: 13px; padding-block: 0 40px; border-top: 1px solid var(--line); padding-top: 18px; }
+
+/* Lightbox */
+dialog#lb {
+  border: 0; padding: 0; border-radius: 18px; background: var(--surface); color: var(--ink);
+  width: min(920px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); box-shadow: 0 30px 80px rgb(0 0 0 / .4);
+}
+dialog#lb::backdrop { background: rgb(10 14 18 / .6); backdrop-filter: blur(3px); }
+.lb-in { display: grid; grid-template-columns: 1.2fr 1fr; max-height: inherit; }
+.lb-photo { background: var(--photo); display: grid; place-items: center; min-height: 0; aspect-ratio: 1/1; max-width: 100%; }
+.lb-photo img { width: 100%; height: 100%; object-fit: contain; padding: 20px; }
+.lb-info { padding: 26px 24px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; min-width: 0; }
+.lb-info .name { font: 800 24px/1.15 var(--display); }
+.close {
+  position: absolute; top: 10px; right: 10px; width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; font-size: 20px; line-height: 1;
+}
+@media (max-width: 700px) {
+  .lb-in { grid-template-columns: 1fr; overflow-y: auto; }
+  .lb-photo { aspect-ratio: 4/3; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+body { margin: 0; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">Christmas 2026 · <span id="total"></span> things</div>
+    <h1>Nathen's Wishlist</h1>
+    <p class="lede">Tap any photo for a closer look. <b>Sizes and colors are on the yellow tags</b>, and every green button goes straight to the right product page. Where it says <b>Pick one</b>, either option is great.</p>
+  </header>
+
+  <nav class="bar" aria-label="Filter wishlist">
+    <div class="tabs" id="tabs" role="toolbar"></div>
+    <label class="search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Search the list" aria-label="Search the list">
+    </label>
+  </nav>
+
+  <main id="main"></main>
+
+  <footer>Made from my wishlist slides. Prices and stock change, so check the store page before buying.</footer>
+</div>
+
+<dialog id="lb" aria-label="Item details">
+  <button class="close" id="lbClose" aria-label="Close">×</button>
+  <div class="lb-in">
+    <div class="lb-photo" id="lbPhoto"></div>
+    <div class="lb-info" id="lbInfo"></div>
+  </div>
+</dialog>
+
+<script>
+const CATS = [
+  { id: "clothes", label: "Clothes" },
+  { id: "gym",     label: "Gym" },
+  { id: "pc",      label: "PC Setup" },
+  { id: "gundam",  label: "Gundam" },
+];
+
+// group: items sharing a group render as one "Pick one" card
+const ITEMS = [
+  // Clothes
+  { id: "gs-hoodie", cat: "clothes", store: "Gymshark", name: "Washed Lifting Hoodie", img: "images/gs-hoodie.jpg",
+    tags: ["Size L", "Black"], links: [{ label: "Buy at Gymshark", url: "https://www.gymshark.com/products/gymshark-washed-lifting-hoodie-pullovers-black-aw26" }] },
+  { id: "gs-power", cat: "clothes", store: "Gymshark", name: "Power Straight Leg Sweatpants", img: "images/gs-power.jpg",
+    tags: ["Size M", "Any color but black"], links: [{ label: "Buy at Gymshark", url: "https://www.gymshark.com/products/gymshark-power-straight-leg-pant-pants-grey-ss26" }] },
+  { id: "gs-pumper", cat: "clothes", store: "Gymshark", name: "Straight Leg Pumper Pants", img: "images/gs-pumper.jpg",
+    tags: ["Size M", "Maroon"], note: "Gymshark calls the color “Cherry Purple”.",
+    links: [{ label: "Buy at Gymshark", url: "https://www.gymshark.com/products/gymshark-straight-leg-pumper-pants-pants-purple-aw25" }] },
+  { id: "gs-sulek", cat: "clothes", store: "Gymshark", name: "Gymshark x Sam Sulek Long Sleeve T-Shirt", img: "images/gs-sulek.jpg",
+    tags: ["Size L", "Blue"], note: "The Henley version that shows up when you search this is good too.",
+    links: [{ label: "Buy at Gymshark", url: "https://www.gymshark.com/products/gymshark-gs-x-sam-sulek-long-sleeve-t-shirt-ls-tops-blue-aw26" }] },
+  { id: "hollister", cat: "clothes", store: "Hollister", name: "Boxy Heavyweight Long-Sleeve St. Anton Graphic Tee", img: "images/hollister.jpg",
+    tags: ["Size L"], links: [{ label: "Buy at Hollister", url: "https://www.hollisterco.com/shop/us/p/boxy-heavyweight-long-sleeve-st-anton-graphic-tee-63859158?seq=09" }] },
+  { id: "youngla", cat: "clothes", store: "YoungLA", name: "The Original Sweats", ph: "soon",
+    tags: ["Size L", "Teal wash"], note: "YoungLA’s site is closed right now. I’ll add the link when it opens again.", links: [] },
+  { id: "giftcard", cat: "clothes", store: "Any store", name: "Visa gift card for clothes at the mall", ph: "giftcard",
+    tags: ["Any amount"], note: "Sold at most grocery stores and pharmacies.", links: [] },
+
+  // Gym
+  { id: "raw-iso", cat: "gym", store: "Raw Nutrition", name: "CBUM Itholate Protein", img: "images/raw-iso.png",
+    tags: ["Golden Cookie", "Orange Creamsicle", "Peanut Butter Cookie"], note: "Any of these flavors. You pick the flavor on the product page.",
+    links: [{ label: "Buy at Raw Nutrition", url: "https://getrawnutrition.com/products/cbum-series-iso-protein" }] },
+  { id: "raw-eaa", cat: "gym", store: "Raw Nutrition", name: "EAA Plus", img: "images/raw-eaa.png",
+    tags: ["Sour Blood Orange"], links: [{ label: "Buy at Raw Nutrition", url: "https://getrawnutrition.com/products/eaa" }] },
+  { id: "raw-winter", cat: "gym", store: "Raw Nutrition", name: "The Winterberry Stack (Sam Sulek collab bundle)", img: "images/raw-winter.jpg",
+    tags: ["Bundle"], links: [{ label: "Buy at Raw Nutrition", url: "https://getrawnutrition.com/products/the-winterberry-stack-sulek-shaker?variant=54717113860414" }] },
+  { id: "creatine", cat: "gym", store: "Optimum Nutrition", name: "Micronized Creatine Capsules", img: "images/creatine.png",
+    tags: ["300 count"], links: [{ label: "Buy on Amazon", url: "https://www.amazon.com/dp/B000GIQS0W" }] },
+  { id: "premier", cat: "gym", store: "Premier Protein", name: "Premier Protein Shakes", img: "images/premier.png",
+    tags: ["Caramel", "Chocolate", "Coffee"], note: "Any of these flavors.",
+    links: [{ label: "Buy on Amazon", url: "https://www.amazon.com/dp/B008JGIZGS" }] },
+
+  // PC setup
+  { id: "asus", cat: "pc", group: "monitor", store: "ASUS ROG", name: "ROG Strix OLED XG27AQDMES", img: "images/asus.png",
+    tags: ["27\"", "1440p", "240Hz", "OLED"], links: [{ label: "View at ASUS", url: "https://rog.asus.com/us/monitors/27-to-31-5-inches/rog-strix-oled-xg27aqdmes/" }] },
+  { id: "msi", cat: "pc", group: "monitor", store: "MSI", name: "MAG 274QP QD-OLED X24", img: "images/msi.png",
+    tags: ["27\"", "1440p", "240Hz", "QD-OLED", "Metallic Black"], links: [{ label: "View at MSI", url: "https://www.msi.com/Monitor/MAG-274QP-QD-OLED-X24" }] },
+  { id: "v75", cat: "pc", group: "keyboard", preferred: true, store: "GravaStar", name: "Mercury V75 Pro", img: "images/v75.jpg",
+    tags: ["Cyberpunk"], links: [{ label: "Buy at GravaStar", url: "https://www.gravastar.com/products/mercury-v75-pro-cyberpunk" }] },
+  { id: "v60", cat: "pc", group: "keyboard", store: "GravaStar", name: "Mercury V60 Pro Special Edition", img: "images/v60.jpg",
+    tags: ["Cyber Frost Black"], links: [{ label: "Buy at GravaStar", url: "https://www.gravastar.com/products/mercury-v60-pro-special-edition-cyber-frost-black" }] },
+  { id: "cable-kit", cat: "pc", store: "Minimal Desk Setups", name: "Cable Management Kit", img: "images/cable-kit.png",
+    tags: [], links: [{ label: "Buy at Minimal Desk Setups", url: "https://shop.minimaldesksetups.com/products/cable-management-kit?variant=48561286611137" }] },
+  { id: "dp-cable", cat: "pc", store: "Best Buy", name: "DisplayPort Cables", img: "images/dp-cable.jpg",
+    tags: ["Need 2", "6–10 ft"], note: "Any brand works. This Insignia 10 ft one is an example.",
+    links: [{ label: "Buy at Best Buy", url: "https://www.bestbuy.com/product/insignia-10-displayport-cable-black/J2FPJKSZ8J/sku/6473495" }] },
+  { id: "stand", cat: "pc", store: "Amazon", name: "Pyramid Monitor Stand", img: "images/stand.jpg",
+    tags: ["Only with a monitor"], note: "Only if someone is getting me one of the monitors. The link is an example.",
+    links: [{ label: "See example on Amazon", url: "https://www.amazon.com/dp/B073G9RWKT" }] },
+
+  // Gundam
+  { id: "hinu", cat: "gundam", store: "Gundam Planet", name: "RG RX-93-ν2 Hi-Nu Gundam", img: "images/hinu.jpg",
+    tags: ["Real Grade", "1/144"], links: [{ label: "Buy at Gundam Planet", url: "https://www.gundamplanet.com/collections/real-grade-gunpla/products/rg-rx-93-2-hi-nu-gundam" }] },
+  { id: "aerial", cat: "gundam", store: "Gundam Planet", name: "Full Mechanics Gundam Aerial", img: "images/aerial.jpg",
+    tags: ["1/100"], links: [{ label: "Buy at Gundam Planet", url: "https://www.gundamplanet.com/collections/master-grade/products/full-mechanics-1-100-gundam-aerial" }] },
+  { id: "kosmos", cat: "gundam", store: "Gundam Planet", name: "KOSMOS LED Set for Full Mechanics Aerial (Body Only)", img: "images/kosmos.jpg",
+    tags: ["Add-on", "1/100"], note: "Lights for the Aerial kit above. Get it together with the Aerial.",
+    links: [{ label: "Buy at Gundam Planet", url: "https://www.gundamplanet.com/collections/master-grade/products/kosmos-led-set-for-full-mechanics-1-100-gundam-aerial-body-only" }] },
+  { id: "barbatos", cat: "gundam", store: "Gundam Planet", name: "MG ASW-G-08 Gundam Barbatos Lupus", img: "images/barbatos.jpg",
+    tags: ["Master Grade", "1/100"], links: [{ label: "Buy at Gundam Planet", url: "https://www.gundamplanet.com/collections/master-grade/products/mg-asw-g-08-gundam-barbatos-lupus" }] },
+  { id: "gnx", cat: "gundam", store: "Gundam Planet", name: "MG GNX-603T GN-X", img: "images/gnx.jpg",
+    tags: ["Master Grade", "1/100"], links: [{ label: "Buy at Gundam Planet", url: "https://www.gundamplanet.com/collections/master-grade/products/mg-gnx-603t-gn-x" }] },
+  { id: "bases", cat: "gundam", store: "Bandai", name: "Action Base display stands", img: "images/bases.jpg",
+    tags: ["HG", "RG", "MG"], note: "Stands to pose the kits. High Grade and Real Grade kits use the 1/144 size, Master Grade kits use 1/100.",
+    links: [
+      { label: "1/144 (HG & RG)", url: "https://www.gundamplanet.com/products/1-144-display-stand-action-base-5-clear" },
+      { label: "1/100 (MG)", url: "https://www.gundamplanet.com/products/1-100-display-stand-action-base-4-clear" },
+    ] },
+];
+
+const GROUPS = {
+  monitor:  "Monitor",
+  keyboard: "Keyboard",
+};
+
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const byId = Object.fromEntries(ITEMS.map(i => [i.id, i]));
+
+// count "things": a pick-one group counts once
+const thingCount = items => new Set(items.map(i => i.group || i.id)).size;
+$("#total").textContent = thingCount(ITEMS);
+
+function photo(item, big = false) {
+  if (item.img) return `<img src="${item.img}" alt="${esc(item.name)}" loading="${big ? "eager" : "lazy"}">`;
+  if (item.ph === "giftcard") return `<div class="ph"><div class="giftcard"><span>Gift card</span><b>VISA</b></div></div>`;
+  const icon = item.ph === "stand"
+    ? `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"><rect x="10" y="10" width="44" height="28" rx="3"/><path d="M32 38v10M18 54l14-6 14 6z"/></svg>`
+    : `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"><path d="M20 8h24l2 48H36l-4-30-4 30H18z"/><path d="M20 14h24"/></svg>`;
+  return `<div class="ph">${icon}<small>${item.ph === "soon" ? "Photo coming soon" : "Any similar stand"}</small></div>`;
+}
+
+function details(item) {
+  const tags = item.tags.length ? `<div class="chips">${item.tags.map(t => `<span class="chip">${esc(t)}</span>`).join("")}</div>` : "";
+  const note = item.note ? `<p class="note">${esc(item.note)}</p>` : "";
+  const links = item.links.length
+    ? item.links.map((l, i) => `<a class="btn${i ? " ghost" : ""}" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} <span aria-hidden="true">↗</span></a>`).join("")
+    : `<span class="btn off">Link coming soon</span>`;
+  return { tags, note, links: `<div class="actions">${links}</div>` };
+}
+
+function card(item) {
+  const d = details(item);
+  return `<article class="card">
+    <button class="shot" data-open="${item.id}" aria-label="Enlarge photo of ${esc(item.name)}">
+      ${photo(item)}${item.preferred ? `<span class="badge">★ Preferred</span>` : ""}
+    </button>
+    <div class="body">
+      <div class="store">${esc(item.store)}</div>
+      <h3 class="name">${esc(item.name)}</h3>
+      ${d.tags}${d.note}${d.links}
+    </div>
+  </article>`;
+}
+
+function groupCard(key, items) {
+  const pref = items.find(i => i.preferred);
+  return `<div class="group">
+    <div class="group-head"><span class="pick">Pick one</span>${esc(GROUPS[key])}${pref ? ` · I’d prefer the ${esc(pref.name.replace(/^Mercury /, ""))}` : ""}</div>
+    <div class="group-opts">${items.map(card).join(`<div class="or" aria-hidden="true"><span>OR</span></div>`)}</div>
+  </div>`;
+}
+
+let state = { cat: "all", q: "" };
+try { const s = localStorage.getItem("wl-cat"); if (s) state.cat = s; } catch (e) {}
+if (/^#(clothes|gym|pc|gundam)$/.test(location.hash)) state.cat = location.hash.slice(1);
+
+function matches(item) {
+  if (!state.q) return true;
+  const hay = [item.name, item.store, item.note, ...item.tags].join(" ").toLowerCase();
+  return state.q.toLowerCase().split(/\s+/).every(w => hay.includes(w));
+}
+
+function renderTabs() {
+  const all = [{ id: "all", label: "All" }, ...CATS];
+  $("#tabs").innerHTML = all.map(c => {
+    const n = thingCount(ITEMS.filter(i => c.id === "all" || i.cat === c.id));
+    return `<button class="tab" data-cat="${c.id}" aria-pressed="${state.cat === c.id}">${c.label} <span class="n">${n}</span></button>`;
+  }).join("");
+}
+
+function render() {
+  const cats = CATS.filter(c => state.cat === "all" || c.id === state.cat);
+  let html = "", shown = 0;
+  for (const c of cats) {
+    const items = ITEMS.filter(i => i.cat === c.id && matches(i));
+    if (!items.length) continue;
+    shown += items.length;
+    const done = new Set(), parts = [];
+    for (const it of items) {
+      if (it.group) {
+        if (done.has(it.group)) continue;
+        done.add(it.group);
+        parts.push(groupCard(it.group, items.filter(x => x.group === it.group)));
+      } else parts.push(card(it));
+    }
+    html += `<section class="cat" id="sec-${c.id}">
+      <div class="cat-head"><h2>${c.label}</h2><span class="count">${thingCount(items)} ${thingCount(items) === 1 ? "thing" : "things"}</span></div>
+      <div class="grid">${parts.join("")}</div>
+    </section>`;
+  }
+  $("#main").innerHTML = shown ? html : `<p class="empty">Nothing matches “${esc(state.q)}”. Try another word or clear the search.</p>`;
+}
+
+$("#tabs").addEventListener("click", e => {
+  const b = e.target.closest(".tab"); if (!b) return;
+  state.cat = b.dataset.cat;
+  try { localStorage.setItem("wl-cat", state.cat); } catch (err) {}
+  renderTabs(); render();
+});
+$("#q").addEventListener("input", e => { state.q = e.target.value.trim(); render(); });
+
+// Lightbox
+const lb = $("#lb");
+$("#main").addEventListener("click", e => {
+  const b = e.target.closest("[data-open]"); if (!b) return;
+  const item = byId[b.dataset.open], d = details(item);
+  $("#lbPhoto").innerHTML = photo(item, true);
+  $("#lbInfo").innerHTML = `<div class="store">${esc(item.store)}${item.preferred ? " · ★ Preferred" : ""}</div>
+    <h3 class="name">${esc(item.name)}</h3>${d.tags}${d.note}${d.links}`;
+  lb.showModal();
+});
+$("#lbClose").addEventListener("click", () => lb.close());
+lb.addEventListener("click", e => { if (e.target === lb) lb.close(); });
+
+renderTabs(); render();
+</script>
+</body>
+</html>
