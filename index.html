@@ -74,10 +74,6 @@ header.top { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1f
   animation: dramatic 1.4s cubic-bezier(.2, 1.4, .4, 1) both;
 }
 .slide img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; }
-.slide .ribbon {
-  position: absolute; right: -36px; top: 18px; rotate: 35deg; background: var(--red); color: #fff;
-  font: 800 12px/1 var(--body); letter-spacing: .1em; text-transform: uppercase; padding: 8px 44px;
-}
 @keyframes dramatic {
   0% { transform: scale(3.2) rotate(-25deg); opacity: 0; }
   55% { transform: scale(.92) rotate(4deg); opacity: 1; }
@@ -276,9 +272,7 @@ body.calm .slide, body.calm .sticker, body.calm .badge, body.calm .bulb, body.ca
 <div class="wrap">
   <header class="top">
     <button class="slide" id="titleSlide" aria-label="Zoom in on the title slide">
-      <img src="images/memes/title.jpg" alt="The original title slide: Buddy the Elf and a cat wearing ornaments, with 'Click to add title' still on it">
-      <span class="ribbon">Original slide</span>
-    </button>
+      <img src="images/memes/title.jpg" alt="The original title slide: Buddy the Elf and a cat wearing ornaments, with 'Click to add title' still on it">    </button>
     <div class="hero-copy">
       <div class="eyebrow">Christmas 2026 · <span id="total"></span> things</div>
       <h1 id="title">Nathen's Wishlist</h1>
